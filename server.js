@@ -5,6 +5,7 @@ import articleRoutes from "./routes/articleRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js"
 import commentRoutes from "./routes/commentRoutes.js";
+import requestRoutes from "./routes/requestRoutes.js"
 import dotenv from "dotenv";
 import { upload } from "./middleware/upload.js";
 import path from "path";
@@ -19,6 +20,7 @@ app.use("/api", articleRoutes);
 app.use("/api", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api", requestRoutes);
 app.use("/uploads", express.static("uploads"));
 
 mongoose

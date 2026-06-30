@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import UpdateArticle from "../pages/UpdateArticle";
 import Article from "../pages/Article";
 import AdminDashboard from "../pages/AdminDashboard";
+import CreateRequest from "../pages/createRequest";
 
 export default function AppRoutes() {
   return (
@@ -27,6 +28,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createRequest"
+          element={
+            <ProtectedRoute>
+              <CreateRequest />
             </ProtectedRoute>
           }
         />

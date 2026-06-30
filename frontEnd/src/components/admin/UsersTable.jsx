@@ -64,7 +64,7 @@ const UsersTable = () => {
             <thead>
               <tr className="border-b border-white/10">
                 <th className="p-4 text-left text-blue-200">Name</th>
-                <th className="p-4 text-left text-blue-200">Emeil</th>
+                <th className="p-4 text-left text-blue-200">Email</th>
                 <th className="p-4 text-left text-blue-200">Role</th>
                 <th className="p-4 text-center text-blue-200">Update</th>
                 <th className="p-4 text-center text-blue-200">Delete</th>

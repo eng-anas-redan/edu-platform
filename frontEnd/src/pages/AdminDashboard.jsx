@@ -2,6 +2,7 @@ import DashboardStats from "../components/admin/DashboardStats";
 import ArticlesTable from "../components/admin/ArticlesTable";
 import CommentsTable from "../components/admin/CommentsTable";
 import UsersTable from "../components/admin/UsersTable";
+import VerificationRequest from "../components/admin/VerificationRequest";
 
 const AdminDashboard = () => {
   return (
@@ -11,6 +12,7 @@ const AdminDashboard = () => {
         <ArticlesTable />
         <CommentsTable />
         <UsersTable />
+        <VerificationRequest/>
       </div>
     </div>
   );
