@@ -10,6 +10,7 @@ import UpdateArticle from "../pages/UpdateArticle";
 import Article from "../pages/Article";
 import AdminDashboard from "../pages/AdminDashboard";
 import CreateRequest from "../pages/createRequest";
+import Profile from "../pages/Profile";
 
 export default function AppRoutes() {
   return (
@@ -36,6 +37,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <CreateRequest />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute allowedRoles={["teacher"]}>
+              <Profile />
             </ProtectedRoute>
           }
         />
