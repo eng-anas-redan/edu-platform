@@ -74,7 +74,7 @@ const ArticleCard = ({
         <h2 className="text-lg font-bold text-white">{title}</h2>
       </div>
       <div className=" text-sm text-start text-gray-300">
-        {content.length > 400 ? `${content.slice(0, 400)}...` : content}
+        {content.length > 400 ? `${content.slice(0, 200)}...` : content}
         <div className="mt-2">
           <Link
             to={`/articles/${id}`}

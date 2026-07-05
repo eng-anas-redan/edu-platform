@@ -16,7 +16,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 // استخدام routes
-app.use("/api", articleRoutes);
+app.use("/api/articles", articleRoutes);
 app.use("/api", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/comments", commentRoutes);

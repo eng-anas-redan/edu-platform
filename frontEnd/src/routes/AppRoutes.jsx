@@ -41,7 +41,7 @@ export default function AppRoutes() {
           }
         />
         <Route
-          path="/account"
+          path="/account/:id"
           element={
             <ProtectedRoute allowedRoles={["teacher"]}>
               <Profile />

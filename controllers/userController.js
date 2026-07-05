@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Request from "../models/VerificationRequest.js";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
@@ -9,7 +10,7 @@ export const registerUser = async (req, res) => {
       fname,
       lname,
       email,
-      password
+      password,
     });
 
     const userWithoutPassword = user.toObject();
@@ -37,8 +38,13 @@ export const getSingleUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
-    res.json(user);
+    const request = await Request.findOne({ user: user._id });
+    res.json({
+      ...user.toObject(),
+      bio: request?.bio,
+      experience: request?.experience,
+      rating: request?.rating,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -51,7 +57,7 @@ export const updateUser = async (req, res) => {
     const user = await User.findByIdAndUpdate(
       req.params.id,
       { fname, lname, email },
-      { new: true }
+      { new: true },
     ).select("-password");
 
     if (!user) {
@@ -84,37 +90,36 @@ export const loginUser = async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res.status(404).json({ message: "User not found"});
+      return res.status(404).json({ message: "User not found" });
     }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      return res.status(400).json({message: "Invalid password"});
+      return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign(
       {
         id: user._id,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d"
-      }
+        expiresIn: "7d",
+      },
     );
 
-  res.json({
-  message: "Login successful",
-  token,
-  user: {
-    id: user._id,
-    fname: user.fname,
-    email: user.email,
-    role: user.role
-  }
-});
-
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        fname: user.fname,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (error) {
-    res.status(500).json({error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };

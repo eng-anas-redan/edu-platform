@@ -4,6 +4,7 @@ import {
   updateArticle,
   getAllArticles,
   getSingleArticle,
+  getArticlesByUserId,
   deleteArticle,
   toggleLikeArticle,
 } from "../controllers/articleController.js";
@@ -15,7 +16,7 @@ const router = express.Router();
 
 // CREATE
 router.post(
-  "/articles",
+  "/",
   authMiddleware,
   roleMiddleware("teacher", "admin"),
   upload.array("images", 5),
@@ -23,12 +24,13 @@ router.post(
 );
 
 // READ
-router.get("/articles", getAllArticles);
-router.get("/articles/:id", getSingleArticle);
+router.get("/", getAllArticles);
+router.get("/user/:id", getArticlesByUserId);
+router.get("/:id", getSingleArticle);
 
 // UPDATE
 router.put(
-  "/articles/:id",
+  "/:id",
   authMiddleware,
   upload.array("images"),
   updateArticle,
@@ -36,5 +38,5 @@ router.put(
 router.put("/:id/like", authMiddleware, toggleLikeArticle);
 
 // DELETE
-router.delete("/articles/:id", authMiddleware, deleteArticle);
+router.delete("/:id", authMiddleware, deleteArticle);
 export default router;

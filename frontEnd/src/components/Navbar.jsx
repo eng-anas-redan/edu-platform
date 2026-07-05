@@ -3,7 +3,7 @@ import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-const Navbar = ({ fName }) => {
+const Navbar = ({userId , fName }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -75,7 +75,7 @@ const Navbar = ({ fName }) => {
             {showDropdown && (
               <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-primary-100">
                 <Link
-                  to="/account"
+                  to={`/account/${userId}`}
                   className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
                   onClick={() => setShowDropdown(false)}
                 >

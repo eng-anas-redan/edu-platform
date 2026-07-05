@@ -64,6 +64,22 @@ export const getArticleById = async (id) => {
   return data;
 };
 
+export const getArticlesByUserId = async (id) => {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/articles/user/${id}`,{
+    headers: {
+      Authorization: `Bearer ${token}`},
+    });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
 export const likedArticle = async (id) => {
   const token = localStorage.getItem("token");
 

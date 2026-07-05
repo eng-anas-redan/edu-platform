@@ -79,6 +79,23 @@ export const getAllArticles = async (req, res) => {
   }
 };
 
+export const getArticlesByUserId = async (req, res) => {
+  try {
+    const {id} = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        message: "Invalid article id",
+      });
+    }
+    const articles = await Article.find({author : id})
+      .populate("author", "fname lname email")
+      .sort({ createdAt: -1 });
+    res.json(articles);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const getSingleArticle = async (req, res) => {
   try {
     const { id } = req.params;
