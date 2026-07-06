@@ -6,6 +6,10 @@ const requestSchema = new mongoose.Schema(
       type: String,
     },
 
+    specialty: {
+    type: String,
+    required: true,
+    },
     experience: {
       type: Number,
       required: true,

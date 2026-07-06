@@ -2,6 +2,7 @@ import { useState } from "react";
 
 const RequestForm = ({
   initialBio = "",
+  initialSpecialty="",
   initialExperience = 0,
   initialIdCardFront = "",
   initialIdCardBack = "",
@@ -10,6 +11,7 @@ const RequestForm = ({
   onSubmit,
 }) => {
   const [bio, setBio] = useState(initialBio);
+  const [specialty,setSpecialty] = useState(initialSpecialty);
   const [experience, setExperience] = useState(initialExperience);
   const [idCardFront, setIdCardFront] = useState(initialIdCardFront);
   const [idCardBack, setIdCardBack] = useState(initialIdCardBack);
@@ -24,6 +26,7 @@ const RequestForm = ({
       const formData = new FormData();
 
       formData.append("bio", bio);
+      formData.append("specialty",specialty);
       formData.append("experience", experience);
       formData.append("idCardFront", idCardFront);
       formData.append("idCardBack", idCardBack);
@@ -76,7 +79,33 @@ const RequestForm = ({
             required
           />
         </div>
-
+        {/* specialty */}
+        <div>
+          <label className="block text-sm font-medium mb-2 text-white">
+            Specialty :
+          </label>
+          <input
+            type="text"
+            value={specialty}
+            placeholder="Enter Your Specialty"
+            onChange={(e) => setSpecialty(e.target.value)}
+            className="
+    w-full
+    px-4
+    py-3
+    rounded-lg
+    bg-white/10
+    border
+    border-white/20
+    text-white
+    placeholder:text-gray-400
+    focus:outline-none
+    focus:ring-2
+    focus:ring-primary-300
+  "
+            required
+          />
+        </div>
         {/* experience */}
         <div>
           <label className="block text-sm font-medium mb-2 text-white">

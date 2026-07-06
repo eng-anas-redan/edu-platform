@@ -89,7 +89,9 @@ const VerificationRequest = () => {
                   <th className="p-4 text-left text-blue-200">
                     Bio
                   </th>
-
+                  <th className="p-4 text-left text-blue-200">
+                    Specialty
+                  </th>
                   <th className="p-4 text-center text-blue-200">
                     Experience
                   </th>
@@ -116,7 +118,7 @@ const VerificationRequest = () => {
                 </tr>
               </thead>
 
-              <tbody>                {requests.map((request) => (
+              <tbody>{requests.map((request) => (
                   <tr
                     key={request._id}
                     className="border-b border-white/5 hover:bg-white/5 transition-all duration-200"
@@ -149,6 +151,10 @@ const VerificationRequest = () => {
                     {/* BIO */}
                     <td className="p-4 text-slate-400 max-w-xs break-words">
                       {request.bio}
+                    </td>
+                    {/* SPECIALTY */}
+                    <td className="p-4 text-slate-400 max-w-xs break-words">
+                      {request?.specialty}
                     </td>
 
                     {/* EXPERIENCE */}

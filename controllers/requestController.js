@@ -3,7 +3,7 @@ import User from "../models/User.js";
 
 export const createRequest = async (req, res) => {
   try {
-    const { bio, experience } = req.body;
+    const { bio, specialty , experience } = req.body;
     if (!experience) {
       return res.status(400).json({
         message: "years of experience are required",
@@ -37,6 +37,7 @@ export const createRequest = async (req, res) => {
 
     const request = await VerificationRequest.create({
       bio,
+      specialty,
       experience,
       documents: {
         idCard: {
