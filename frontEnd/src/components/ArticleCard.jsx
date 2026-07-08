@@ -59,7 +59,7 @@ const ArticleCard = ({
     >
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center font-bold text-white">
             {authorFirstName.charAt(0)}
           </div>
           <div>

@@ -1,4 +1,6 @@
 import React from "react";
+import { FaStar} from "react-icons/fa";
+import { PiCertificateLight } from "react-icons/pi";
 import ArticleCard from "./ArticleCard";
 import { Link } from "react-router-dom";
 const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
@@ -6,8 +8,8 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
     fname = "",
     lname = "",
     email = "",
-    role = "",
     bio = "",
+    specialty = "",
     experience = 0,
     rating = 0,
   } = teacher;
@@ -27,27 +29,37 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-white">{fullName}</h2>
 
-          <p className="text-gray-300">{role}</p>
+          <p className="text-gray-300">Teacher {specialty}</p>
 
           <div className="flex gap-4 mt-2 text-sm text-gray-400">
-            <span>⭐ {rating > 0 ? rating : "No rating yet"}</span>
-            <span>📚 {experience} yrs experience</span>
+            <div className="flex items-center justify-center gap-2 text-gray-300">
+              <FaStar className="text-yellow-400" size={18} />
+              <span>{rating > 0 ? rating : "No rating yet"}</span>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-gray-300">
+              <PiCertificateLight
+                className="inline text-yellow-400"
+                size={20}
+              />
+              <span>{experience} yrs experience</span>
+            </div>
           </div>
         </div>
 
         {/* Action */}
         {currentUser === teacher._id && (
-          <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
-            Edit Profile
-          </button>
-        )}
-        {currentUser === teacher._id && (
-          <Link
-          to="/createArticle"
-          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-        >
-          + New Article
-        </Link>
+          <div className="flex gap-3">
+            <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
+              Edit Profile
+            </button>
+            <Link
+              to="/createArticle"
+              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            >
+              + New Article
+            </Link>
+          </div>
         )}
       </div>
 

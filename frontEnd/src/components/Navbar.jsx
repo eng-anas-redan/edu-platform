@@ -1,11 +1,12 @@
 import LogoIcon from "../assets/Icon.png";
 import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-const Navbar = ({userId , fName }) => {
+const Navbar = ({ userId, fName }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user")) || {};
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -31,6 +32,46 @@ const Navbar = ({userId , fName }) => {
               alt="React Jobs"
             />
             <h4 className="font-bold tracking-widest">EDU</h4>
+          </div>
+          <div className="hidden lg:flex items-center gap-6 text-sm font-medium">
+            <NavLink
+              to="/home"
+              className={({ isActive }) =>
+                `transition-colors duration-200 ${
+                  isActive
+                    ? "text-primary-300 font-semibold"
+                    : "hover:text-primary-400"
+                }`
+              }
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/users"
+              className={({ isActive }) =>
+                `transition-colors duration-200 ${
+                  isActive
+                    ? "text-primary-300 font-semibold"
+                    : "hover:text-primary-400"
+                }`
+              }
+            >
+              Teachers
+            </NavLink>
+
+            <NavLink
+              to="/contact"
+              className={({ isActive }) =>
+                `transition-colors duration-200 ${
+                  isActive
+                    ? "text-primary-300 font-semibold"
+                    : "hover:text-primary-400"
+                }`
+              }
+            >
+              Contact Us
+            </NavLink>
           </div>
 
           {/* مربع البحث */}
@@ -74,14 +115,14 @@ const Navbar = ({userId , fName }) => {
             {/* Dropdown menu */}
             {showDropdown && (
               <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-primary-100">
-                <Link
-                  to={`/account/${userId}`}
-                  className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                  onClick={() => setShowDropdown(false)}
-                >
-                  <FaUser className="mr-3 text-primary-400" />
-                  Your Profile
-                </Link>
+              {(user.role === "teacher" && <Link
+                to={`/account/${userId}`}
+                className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                onClick={() => setShowDropdown(false)}
+              >
+                <FaUser className="mr-3 text-primary-400" />
+                Your Profile
+              </Link>)}
 
                 <button
                   className="flex items-center w-full text-left px-4 py-3 text-sm text-secondary hover:bg-primary-50 transition-colors duration-150"

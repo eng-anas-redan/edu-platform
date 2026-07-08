@@ -11,6 +11,7 @@ import Article from "../pages/Article";
 import AdminDashboard from "../pages/AdminDashboard";
 import CreateRequest from "../pages/createRequest";
 import Profile from "../pages/Profile";
+import Teachers from "../pages/Teachers"
 
 export default function AppRoutes() {
   return (
@@ -29,6 +30,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <Teachers />
             </ProtectedRoute>
           }
         />

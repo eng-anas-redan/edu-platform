@@ -25,7 +25,25 @@ export const registerUser = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select("-password");
-    res.json(users);
+
+    const requests = await Request.find();
+
+    const usersData = users.map((user) => {
+      const request = requests.find(
+        (r) => r.user.toString() === user._id.toString()
+      );
+
+      return {
+        ...user.toObject(),
+        bio: request?.bio || "",
+        specialty: request?.specialty || "",
+        experience: request?.experience || 0,
+        rating: request?.rating || 0,
+        status: request?.status || null,
+      };
+    });
+
+    res.json(usersData);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -44,6 +62,7 @@ export const getSingleUser = async (req, res) => {
       bio: request?.bio,
       experience: request?.experience,
       rating: request?.rating,
+      specialty : request?.specialty
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
