@@ -11,8 +11,9 @@ import Article from "../pages/Article";
 import AdminDashboard from "../pages/AdminDashboard";
 import CreateRequest from "../pages/createRequest";
 import Profile from "../pages/Profile";
-import Teachers from "../pages/Teachers"
-
+import Teachers from "../pages/Teachers";
+import EditTeacherProfile from "../pages/EditTeacherProfile";
+import ContactUs from "../pages/contactUs";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -30,6 +31,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <ContactUs />
             </ProtectedRoute>
           }
         />
@@ -54,6 +63,14 @@ export default function AppRoutes() {
           element={
             <ProtectedRoute>
               <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/editAccount/:id"
+          element={
+            <ProtectedRoute>
+              <EditTeacherProfile />
             </ProtectedRoute>
           }
         />

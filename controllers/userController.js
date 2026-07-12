@@ -71,18 +71,27 @@ export const getSingleUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { fname, lname, email } = req.body;
+    const {email , bio , experience } = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { fname, lname, email },
-      { new: true },
+      {  email },
+      { new: true , runValidators: true }
     ).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json(user);
+    const request = await Request.findOneAndUpdate(
+      {user : user._id} ,
+      {bio , experience}, 
+      {new : true}
+    );
+    res.json({
+      ...user.toObject(),
+      bio : request?.bio,
+      experience: request?.experience,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

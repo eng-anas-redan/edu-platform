@@ -50,9 +50,12 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
         {/* Action */}
         {currentUser === teacher._id && (
           <div className="flex gap-3">
-            <button className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
+             <Link
+              to={`/editAccount/${currentUser}`}
+              className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+            >
               Edit Profile
-            </button>
+            </Link>
             <Link
               to="/createArticle"
               className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
