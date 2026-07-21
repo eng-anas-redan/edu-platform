@@ -7,34 +7,28 @@ export const createRequest = async (req, res) => {
     if (!experience) {
       return res.status(400).json({
         message: "years of experience are required",
-      });
-    }
+      });}
     if (
       !req.files?.idCardFront ||
       !req.files?.idCardBack ||
-      !req.files?.certificate
-    ) {
+      !req.files?.certificate ) {
       return res.status(400).json({
         message: "ID card (front & back) and certificate are required.",
-      });
-    }
+      });}
     const existingRequest = await VerificationRequest.findOne({
       user: req.user.id,
       status: "pending",
     });
-
     if (existingRequest) {
       return res.status(400).json({
         message: "You already have a pending verification request.",
-      });
-    }
+      });}
     const idCardFront = `/uploads/${req.files.idCardFront[0].filename}`;
     const idCardBack = `/uploads/${req.files.idCardBack[0].filename}`;
     const certificate = `/uploads/${req.files.certificate[0].filename}`;
     const otherDocuments =
       req.files.otherDocuments?.map((file) => `/uploads/${file.filename}`) ||
       [];
-
     const request = await VerificationRequest.create({
       bio,
       specialty,
@@ -52,8 +46,8 @@ export const createRequest = async (req, res) => {
     res.status(201).json(request);
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
-};
+  }};
+
 export const approveRequest = async (req, res) => {
   try {
     // التحقق أن المستخدم أدمن

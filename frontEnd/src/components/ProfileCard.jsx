@@ -1,4 +1,3 @@
-import React from "react";
 import { FaStar , FaArrowRight} from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import { Link } from "react-router-dom";

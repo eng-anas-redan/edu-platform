@@ -1,9 +1,8 @@
-import React from "react";
 import { FaStar} from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import ArticleCard from "./ArticleCard";
 import { Link } from "react-router-dom";
-const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
+const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" , currentUserRole=""  , handleDelete}) => {
   const {
     fname = "",
     lname = "",
@@ -104,6 +103,7 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
             <div key={article._id} className="flex justify-center">
               <ArticleCard
                 currentUser={currentUser}
+                currentUserRole={currentUserRole}
                 id={article._id}
                 title={article.title}
                 content={article.content}
@@ -111,9 +111,11 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" }) => {
                 images={article.images}
                 likes={article.likes}
                 comments={article.commentsCount}
+                authorId={article.author._id}
                 authorFirstName={article.author.fname}
                 authorLastName={article.author.lname}
                 createdAt={article.createdAt}
+                handleDelete={handleDelete}
               />
             </div>
           ))

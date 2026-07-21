@@ -5,7 +5,6 @@ export const createComment = async (req, res) => {
   try {
     const { content } = req.body;
     const { articleId } = req.params;
-
     // التحقق من وجود المقال
     const article = await Article.findById(articleId);
 
@@ -15,12 +14,11 @@ export const createComment = async (req, res) => {
         message: "Article not found",
       });
     }
-
     // التحقق من المحتوى
     if (!content || !content.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Content is required",
+        message: "Content is required",س
       });
     }
 

@@ -1,18 +1,22 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { getArticleById } from "../services/articleService";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { useState, useEffect ,useRef } from "react";
+import { FaTrash, FaEdit, FaShare } from "react-icons/fa";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { TbMessageReportFilled } from "react-icons/tb";
 import {
   getComments,
   createComment,
   editComment,
   deleteComment,
 } from "../services/commentService";
-import { likedArticle } from "../services/articleService";
+import { likedArticle , deleteArticle } from "../services/articleService";
+import { useNavigate } from "react-router-dom";
 
 const Article = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -22,6 +26,9 @@ const Article = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const userData = JSON.parse(localStorage.getItem("user")) || {};
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+  const isAdmin = userData.role === "admin";
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -48,6 +55,19 @@ const Article = () => {
       setLikesCount(article.likes.length);
     }
   }, [article, userData.id]);
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () =>
+    document.removeEventListener("mousedown", handleClickOutside);
+}, []);
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -125,6 +145,15 @@ const Article = () => {
   if (!article) {
     return <div>Loading...</div>;
   }
+
+  const handleDeleteArticle = async () => {
+  try {
+    await deleteArticle(id);
+    navigate("/Home");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 text-white flex items-center justify-center mx-10 pt-20">
@@ -243,27 +272,61 @@ transition-colors"
             </button>
           </div>
 
-          <button
-            className="flex items-center gap-1
-text-gray-300
-hover:text-white
-transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className="flex items-center gap-1
+         text-gray-300
+         hover:text-white
+         transition-colors"
+              onClick={() => setShowDropdown(!showDropdown)}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-              />
-            </svg>
-          </button>
+              <BsThreeDotsVertical />
+            </button>
+            {showDropdown && (
+              <div className="absolute right-0 bottom-full translate-y-[-8px] w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-primary-100">
+                <Link
+                  to={`/shareArticle`}
+                  className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  <FaShare className="mr-3 text-primary-400" />
+                  Share
+                </Link>
+                {(userData.id === article.author._id) && (
+                  <Link
+                    to={`/updateArticle/${id}`}
+                    className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <FaEdit className="mr-3 text-primary-400" />
+                    Edit
+                  </Link>
+                )}
+                {!(userData.id === article.author._id) && (
+                  <Link
+                    to={`/reportArticle`}
+                    className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <TbMessageReportFilled className="mr-3 text-lg text-primary-400" />
+                    Report
+                  </Link>
+                )}
+                {((userData.id === article.author._id) || isAdmin) && (
+                  <button
+                    onClick={() => {
+                      handleDeleteArticle(id);
+                      setShowDropdown(false);
+                    }}
+                    className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <FaTrash className="mr-3" />
+                    Delete
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         {/* =========== */}
         <div className="flex flex-wrap gap-2 mt-3">

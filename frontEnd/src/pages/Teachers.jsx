@@ -71,7 +71,6 @@ const Teachers = () => {
           >
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-primary-500/20 flex items-center justify-center mb-4">
-                {/* <span className="text-4xl text-primary-400">👨‍🏫</span> */}
                 <FaChalkboardTeacher className="text-primary-400 text-4xl" />
               </div>
 

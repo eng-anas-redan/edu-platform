@@ -3,8 +3,7 @@ import Navbar from "../components/Navbar";
 import {
   FaEnvelope,
   FaPhone,
-  FaMapMarkerAlt,
-  FaPaperPlane,
+  FaMapMarkerAlt
 } from "react-icons/fa";
 const ContactUs = () => {
   const currentUser = JSON.parse(localStorage.getItem("user")) || {};

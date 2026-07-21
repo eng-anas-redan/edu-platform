@@ -1,6 +1,5 @@
-import React from "react";
 import Navbar from "../components/Navbar";
-import { getArticles } from "../services/articleService";
+import { getArticles, deleteArticle } from "../services/articleService";
 import { useState, useEffect } from "react";
 import ArticleCard from "../components/ArticleCard";
 const Home = () => {
@@ -20,6 +19,17 @@ const Home = () => {
     fetchArticles();
   }, []);
 
+  const handleDelete = async (articleId) => {
+    try {
+      await deleteArticle(articleId);
+
+      setArticlesData((prevArticles) =>
+        prevArticles.filter((article) => article._id !== articleId),
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 text-white flex items-center justify-center mx-10 pt-20">
       <Navbar userId={userData.id} fName={userData?.fname} />
@@ -28,16 +38,19 @@ const Home = () => {
           <div key={article._id}>
             <ArticleCard
               currentUser={userData?.id}
-              id = {article._id}
+              currentUserRole={userData.role}
+              id={article._id}
               title={article.title}
               content={article.content}
               tags={article.tags}
               images={article.images}
               likes={article.likes}
               comments={article.commentsCount}
-              authorFirstName ={article.author.fname}
-              authorLastName ={article.author.lname}
-              createdAt = {article.createdAt}
+              authorId={article.author._id}
+              authorFirstName={article.author.fname}
+              authorLastName={article.author.lname}
+              createdAt={article.createdAt}
+              handleDelete={handleDelete}
             />
           </div>
         ))}
