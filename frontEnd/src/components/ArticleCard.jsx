@@ -74,7 +74,7 @@ const ArticleCard = ({
   return (
     <div
       dir="auto"
-      className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4"
+      className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4 " dir="auto"
     >
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">

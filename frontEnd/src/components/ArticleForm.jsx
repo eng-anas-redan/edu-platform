@@ -131,7 +131,7 @@ const ArticleForm = ({
           />
         </div>
         {/* images */}
-        <div>
+        { !( buttonText === "Update") && <div>
           <label className="block text-sm font-medium mb-2 text-white">
             Images :
           </label>
@@ -158,7 +158,7 @@ const ArticleForm = ({
               focus:ring-primary-300
             "
           />
-        </div>
+        </div>}
         {error && <p className="text-red-400 text-sm text-center">{error}</p>}
         {/* Submit */}
         <button

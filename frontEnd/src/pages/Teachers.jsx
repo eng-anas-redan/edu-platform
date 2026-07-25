@@ -27,7 +27,7 @@ const Teachers = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 text-white flex flex-col items-center justify-center px-30">
       <Navbar userId={currentUser.id} fName={currentUser?.fname} />
-      <div className="max-w-7xl mx-auto mb-10">
+      <div className="max-w-7xl mx-auto mb-10 mt-20">
         <h1 className="text-4xl font-bold text-white">
           {" "}
           <FaChalkboardTeacher className="inline text-primary-400 text-4xl mr-4" />

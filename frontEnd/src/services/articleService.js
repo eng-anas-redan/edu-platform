@@ -40,8 +40,12 @@ export const updateArticle = async (id , formData) => {
   return data;
 };
 
-export const getArticles = async () => {
-  const response = await fetch(`${API_URL}/articles`);
+export const getArticles = async (filters = {}) => {
+  const params = new URLSearchParams(filters);
+
+  const response = await fetch(
+    `${API_URL}/articles?${params.toString()}`
+  );
 
   const data = await response.json();
 
@@ -83,7 +87,7 @@ export const getArticlesByUserId = async (id) => {
 export const likedArticle = async (id) => {
   const token = localStorage.getItem("token");
 
-  const response = await fetch(`${API_URL}/${id}/like`, {
+  const response = await fetch(`${API_URL}/articles/${id}/like`, {
     method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -108,6 +112,17 @@ export const deleteArticle = async (id) => {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+export const getAllTags = async () => {
+  const response = await fetch(`${API_URL}/articles/tags`);
 
   const data = await response.json();
 

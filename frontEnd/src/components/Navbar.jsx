@@ -3,11 +3,12 @@ import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-const Navbar = ({ userId, fName }) => {
+const Navbar = ({ userId, fName , onSearch }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const dropdownRef = useRef(null);
+  const [word, setWord] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -79,6 +80,13 @@ const Navbar = ({ userId, fName }) => {
             <input
               type="text"
               placeholder="Search"
+              value={word}
+              onChange={(e) => setWord(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onSearch(word);
+                }
+              }}
               className="bg-primary-800 text-white placeholder-primary-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-accent-500 w-64"
             />
             <FaSearch className="absolute left-3 top-3 text-primary-300" />
@@ -115,14 +123,16 @@ const Navbar = ({ userId, fName }) => {
             {/* Dropdown menu */}
             {showDropdown && (
               <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-primary-100">
-              {(user.role === "teacher" && <Link
-                to={`/account/${userId}`}
-                className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                onClick={() => setShowDropdown(false)}
-              >
-                <FaUser className="mr-3 text-primary-400" />
-                Your Profile
-              </Link>)}
+                {user.role === "teacher" && (
+                  <Link
+                    to={`/account/${userId}`}
+                    className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                    onClick={() => setShowDropdown(false)}
+                  >
+                    <FaUser className="mr-3 text-primary-400" />
+                    Your Profile
+                  </Link>
+                )}
 
                 <button
                   className="flex items-center w-full text-left px-4 py-3 text-sm text-secondary hover:bg-primary-50 transition-colors duration-150"

@@ -2,11 +2,12 @@ import express from "express";
 import {
   createArticle,
   updateArticle,
-  getAllArticles,
+  getArticles,
   getSingleArticle,
   getArticlesByUserId,
   deleteArticle,
   toggleLikeArticle,
+  getAllTags
 } from "../controllers/articleController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import roleMiddleware from "../middleware/roleMiddleware.js";
@@ -24,10 +25,10 @@ router.post(
 );
 
 // READ
-router.get("/", getAllArticles);
+router.get("/", getArticles);
 router.get("/user/:id", getArticlesByUserId);
+router.get("/tags", getAllTags);
 router.get("/:id", getSingleArticle);
-
 // UPDATE
 router.put(
   "/:id",

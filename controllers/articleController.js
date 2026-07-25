@@ -1,6 +1,6 @@
 import Article from "../models/Article.js";
 import mongoose from "mongoose";
-
+import User from "../models/User.js";
 export const createArticle = async (req, res) => {
   try {
     const { title, content, tags } = req.body;
@@ -54,10 +54,6 @@ export const updateArticle = async (req, res) => {
       article.tags = req.body.tags;
     }
 
-    if (req.body.images !== undefined) {
-      article.images = req.body.images;
-    }
-
     await article.save();
 
     res.json(article);
@@ -68,26 +64,57 @@ export const updateArticle = async (req, res) => {
   }
 };
 
-export const getAllArticles = async (req, res) => {
+export const getArticles = async (req, res) => {
   try {
-    const articles = await Article.find()
+    const { word, tag, author, sort } = req.query;
+    const filter = {};
+    // البحث
+    if (word) {
+      const users = await User.find({
+        $or: [
+          { fname: { $regex: word, $options: "i" } },
+          { lname: { $regex: word, $options: "i" } },
+        ],
+      });
+      const userIds = users.map((u) => u._id);
+      filter.$or = [
+        { title: { $regex: word, $options: "i" } },
+        { tags: { $regex: word, $options: "i" } },
+        { author: { $in: userIds } },
+      ];
+    }
+    // فلترة حسب الـ Tag
+    if (tag) {
+      filter.tags = tag;
+    }
+    // فلترة حسب الكاتب
+    if (author) {
+      filter.author = author;
+    }
+    // الترتيب
+    let sortOption = { createdAt: -1 };
+    if (sort === "oldest") {
+      sortOption = { createdAt: 1 };
+    }
+    const articles = await Article.find(filter)
       .populate("author", "fname lname email")
-      .sort({ createdAt: -1 });
+      .sort(sortOption);
     res.json(articles);
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };
 
 export const getArticlesByUserId = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        message: "Invalid article id",
+        message: "Invalid user id",
       });
     }
-    const articles = await Article.find({author : id})
+    const articles = await Article.find({ author: id })
       .populate("author", "fname lname email")
       .sort({ createdAt: -1 });
     res.json(articles);
@@ -132,7 +159,7 @@ export const deleteArticle = async (req, res) => {
     }
 
     // التحقق من صاحب المقال
-    if (article.author.toString() !== req.user.id) {
+    if (article.author.toString() !== req.user.id && req.user.role !== "admin") {
       return res.status(403).json({
         message: "You are not allowed to delete this article",
       });
@@ -186,6 +213,18 @@ export const toggleLikeArticle = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getAllTags = async (req, res) => {
+  try {
+    const tags = await Article.distinct("tags");
+
+    res.status(200).json(tags);
+  } catch (error) {
+    res.status(500).json({
       message: error.message,
     });
   }
