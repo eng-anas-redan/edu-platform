@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getRequests,
   approveRequest,
@@ -8,13 +9,8 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 
 const VerificationRequest = () => {
   const [requests, setRequests] = useState([]);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const IMAGE_URL = "http://localhost:5000";
-
-  const imageStyle =
-    "w-20 h-20 object-cover rounded-xl border border-slate-600 shadow-md cursor-pointer hover:scale-110 hover:shadow-xl transition-all duration-300 mx-auto";
+  const navigate = useNavigate();
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -97,22 +93,6 @@ const VerificationRequest = () => {
                   </th>
 
                   <th className="p-4 text-center text-blue-200">
-                    Front ID
-                  </th>
-
-                  <th className="p-4 text-center text-blue-200">
-                    Back ID
-                  </th>
-
-                  <th className="p-4 text-center text-blue-200">
-                    Certificate
-                  </th>
-
-                  <th className="p-4 text-center text-blue-200">
-                    Other Documents
-                  </th>
-
-                  <th className="p-4 text-center text-blue-200">
                     Actions
                   </th>
                 </tr>
@@ -162,132 +142,51 @@ const VerificationRequest = () => {
                       {request.experience}
                     </td>
 
-                    {/* FRONT ID */}
-                    <td className="p-4 text-center">
-                      {request.documents?.idCard?.front ? (
-                        <img
-                          src={`${IMAGE_URL}${request.documents.idCard.front}`}
-                          alt="Front ID"
-                          onClick={() =>
-                            setSelectedImage(
-                              `${IMAGE_URL}${request.documents.idCard.front}`
-                            )
-                          }
-                          className={imageStyle}
-                        />
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-
-                    {/* BACK ID */}
-                    <td className="p-4 text-center">
-                      {request.documents?.idCard?.back ? (
-                        <img
-                          src={`${IMAGE_URL}${request.documents.idCard.back}`}
-                          alt="Back ID"
-                          onClick={() =>
-                            setSelectedImage(
-                              `${IMAGE_URL}${request.documents.idCard.back}`
-                            )
-                          }
-                          className={imageStyle}
-                        />
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-
-                    {/* CERTIFICATE */}
-                    <td className="p-4 text-center">
-                      {request.documents?.certificate ? (
-                        <img
-                          src={`${IMAGE_URL}${request.documents.certificate}`}
-                          alt="Certificate"
-                          onClick={() =>
-                            setSelectedImage(
-                              `${IMAGE_URL}${request.documents.certificate}`
-                            )
-                          }
-                          className={imageStyle}
-                        />
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-
-                    {/* OTHER DOCUMENTS */}
-                    <td className="p-4">
-                      <div className="flex flex-wrap justify-center gap-2">
-                        {request.documents?.otherDocuments?.length ? (
-                          request.documents.otherDocuments.map((doc, index) => (
-                            <img
-                              key={index}
-                              src={`${IMAGE_URL}${doc}`}
-                              alt={`Document ${index + 1}`}
-                              onClick={() =>
-                                setSelectedImage(`${IMAGE_URL}${doc}`)
-                              }
-                              className="w-16 h-16 object-cover rounded-lg border border-slate-500 shadow hover:scale-110 transition-all duration-300 cursor-pointer"
-                            />
-                          ))
-                        ) : (
-                          <span className="text-gray-500 text-sm">—</span>
-                        )}
-                      </div>
-                    </td>
-
                     {/* ACTIONS */}
                     <td className="p-4 text-center">
-                      {request.status === "pending" ? (
-                        <div className="flex justify-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => handleApprove(request._id)}
-                            className="text-cyan-400 hover:text-cyan-300"
-                          >
-                            <FaCheck size={18} />
-                          </button>
+  <div className="flex justify-center items-center gap-3">
 
-                          <button
-                            type="button"
-                            onClick={() => handleReject(request._id)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            <FaTimes size={18} />
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
+    <button
+      onClick={() => navigate(`/admin/verification/${request._id}`)}
+      className="
+      px-3 py-1 rounded-lg
+      bg-blue-500/20
+      text-blue-300
+      hover:bg-blue-500/40
+      transition
+      "
+    >
+      View
+    </button>
+
+
+    {request.status === "pending" && (
+      <>
+        <button
+          type="button"
+          onClick={() => handleApprove(request._id)}
+          className="text-cyan-400 hover:text-cyan-300"
+        >
+          <FaCheck size={18} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => handleReject(request._id)}
+          className="text-red-400 hover:text-red-300"
+        >
+          <FaTimes size={18} />
+        </button>
+      </>
+    )}
+
+  </div>
+</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
-          {/* IMAGE MODAL */}
-          {selectedImage && (
-            <div
-              className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-              onClick={() => setSelectedImage(null)}
-            >
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute top-5 right-5 text-white text-4xl"
-              >
-                ×
-              </button>
-
-              <img
-                src={selectedImage}
-                alt="Preview"
-                className="max-w-[90%] max-h-[90%] rounded-xl"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-          )}
         </div>
       )}
     </div>

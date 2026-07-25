@@ -8,7 +8,8 @@ import CreateArticle from "../pages/CreateArticle";
 import ProtectedRoute from "./ProtectedRoute";
 import UpdateArticle from "../pages/UpdateArticle";
 import Article from "../pages/Article";
-import AdminDashboard from "../pages/AdminDashboard";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import VerificationDetails from "../pages/admin/VerificationDetails";
 import CreateRequest from "../pages/createRequest";
 import Profile from "../pages/Profile";
 import Teachers from "../pages/Teachers";
@@ -41,6 +42,10 @@ export default function AppRoutes() {
               <ContactUs />
             </ProtectedRoute>
           }
+        />
+        <Route
+          path="/admin/verification/:id"
+          element={<VerificationDetails />}
         />
         <Route
           path="/users"
@@ -90,12 +95,7 @@ export default function AppRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/articles/:id"
-          element={
-              <Article />
-          }
-        />
+        <Route path="/articles/:id" element={<Article />} />
         <Route
           path="/admin"
           element={
