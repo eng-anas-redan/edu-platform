@@ -161,7 +161,7 @@ const Article = () => {
         dir="auto"
         className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4"
       >
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center justify-between gap-3 mb-3">
           <div>
             <h3 className="font-semibold text-primary-300">
               {article.author.fname} {article.author.lname}
@@ -304,7 +304,7 @@ transition-colors"
                 )}
                 {!(userData.id === article.author._id) && (
                   <Link
-                    to={`/reportArticle`}
+                    to={`/reportArticle/${id}`}
                     className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
                     onClick={() => setShowDropdown(false)}
                   >

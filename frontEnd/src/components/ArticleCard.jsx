@@ -4,6 +4,7 @@ import { likedArticle } from "../services/articleService";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaTrash, FaEdit, FaShare } from "react-icons/fa";
 import { TbMessageReportFilled } from "react-icons/tb";
+import ReportModal from "../components/ReportModal"
 const ArticleCard = ({
   currentUser,
   currentUserRole,
@@ -27,6 +28,7 @@ const ArticleCard = ({
   const dropdownRef = useRef(null);
   const isOwner = currentUser === authorId;
   const isAdmin = currentUserRole === "admin";
+  const [showReport, setShowReport] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -74,7 +76,8 @@ const ArticleCard = ({
   return (
     <div
       dir="auto"
-      className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4 " dir="auto"
+      className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4 "
+      dir="auto"
     >
       <div className="flex justify-between">
         <div className="flex items-center gap-3 mb-3">
@@ -253,32 +256,40 @@ transition-colors"
                 <FaShare className="mr-3 text-primary-400" />
                 Share
               </Link>
-              {isOwner && <Link
-                to={`/updateArticle/${id}`}
-                className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                onClick={() => setShowDropdown(false)}
-              >
-                <FaEdit className="mr-3 text-primary-400" />
-                Edit
-              </Link>}
-              {!isOwner && <Link
-                to={`/reportArticle`}
-                className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                onClick={() => setShowDropdown(false)}
-              >
-                <TbMessageReportFilled className="mr-3 text-lg text-primary-400" />
-                Report
-              </Link>}
-              {(isOwner || isAdmin) && <button
-                onClick={() => {
-                  handleDelete(id);
-                  setShowDropdown(false);
-                }}
-                className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-              >
-                <FaTrash className="mr-3" />
-                Delete
-              </button>}
+              {isOwner && (
+                <Link
+                  to={`/updateArticle/${id}`}
+                  className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                  onClick={() => setShowDropdown(false)}
+                >
+                  <FaEdit className="mr-3 text-primary-400" />
+                  Edit
+                </Link>
+              )}
+              {!isOwner && (
+                <button
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setShowReport(true);
+                  }}
+                  className="flex items-center w-full px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                >
+                  <TbMessageReportFilled className="mr-3 text-lg text-primary-400" />
+                  Report
+                </button>
+              )}
+              {(isOwner || isAdmin) && (
+                <button
+                  onClick={() => {
+                    handleDelete(id);
+                    setShowDropdown(false);
+                  }}
+                  className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <FaTrash className="mr-3" />
+                  Delete
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -295,7 +306,13 @@ transition-colors"
           </span>
         ))}
       </div>
+      <ReportModal
+    articleId={id}
+    isOpen={showReport}
+    onClose={() => setShowReport(false)}
+/>
     </div>
+    
   );
 };
 
