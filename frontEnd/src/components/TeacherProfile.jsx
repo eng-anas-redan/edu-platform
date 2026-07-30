@@ -1,8 +1,15 @@
-import { FaStar} from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import ArticleCard from "./ArticleCard";
 import { Link } from "react-router-dom";
-const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" , currentUserRole=""  , handleDelete}) => {
+const TeacherProfile = ({
+  teacher = {},
+  articles = [],
+  currentUser = "",
+  currentUserRole = "",
+  handleDelete,
+  handleRemoveShare,
+}) => {
   const {
     fname = "",
     lname = "",
@@ -49,7 +56,7 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" , curren
         {/* Action */}
         {currentUser === teacher._id && (
           <div className="flex gap-3">
-             <Link
+            <Link
               to={`/editAccount/${currentUser}`}
               className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
             >
@@ -99,23 +106,31 @@ const TeacherProfile = ({ teacher = {}, articles = [], currentUser = "" , curren
         {articles.length === 0 ? (
           <p className="text-gray-500">No articles yet.</p>
         ) : (
-          articles.map((article) => (
-            <div key={article._id} className="flex justify-center">
+          articles.map((item) => (
+            <div
+              key={`${item.type}-${item.sharedArticleId || item.article._id}`}
+              className="flex justify-center"
+            >
               <ArticleCard
                 currentUser={currentUser}
                 currentUserRole={currentUserRole}
-                id={article._id}
-                title={article.title}
-                content={article.content}
-                tags={article.tags}
-                images={article.images}
-                likes={article.likes}
-                comments={article.commentsCount}
-                authorId={article.author._id}
-                authorFirstName={article.author.fname}
-                authorLastName={article.author.lname}
-                createdAt={article.createdAt}
+                id={item.article._id}
+                title={item.article.title}
+                content={item.article.content}
+                tags={item.article.tags}
+                images={item.article.images}
+                likes={item.article.likes}
+                comments={item.article.commentsCount}
+                authorId={item.article.author._id}
+                authorFirstName={item.article.author.fname}
+                authorLastName={item.article.author.lname}
+                createdAt={item.article.createdAt}
+                sharedAt={item.sharedBy ? item.createdAt : null}
+                sharedBy={item.sharedBy}
+                isShared={item.isShared}
+                sharedArticleId={item.sharedArticleId}
                 handleDelete={handleDelete}
+                handleRemoveShare={handleRemoveShare}
               />
             </div>
           ))

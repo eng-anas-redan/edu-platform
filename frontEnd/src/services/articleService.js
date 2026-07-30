@@ -20,7 +20,7 @@ export const createArticle = async (formData) => {
   return data;
 };
 
-export const updateArticle = async (id , formData) => {
+export const updateArticle = async (id, formData) => {
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_URL}/articles/${id}`, {
@@ -43,8 +43,33 @@ export const updateArticle = async (id , formData) => {
 export const getArticles = async (filters = {}) => {
   const params = new URLSearchParams(filters);
 
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/articles?${params.toString()}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+export const getFeed = async () => {
+  const token = localStorage.getItem("token");
+
   const response = await fetch(
-    `${API_URL}/articles?${params.toString()}`
+    `${API_URL}/articles/shared-articles`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   const data = await response.json();
@@ -57,7 +82,15 @@ export const getArticles = async (filters = {}) => {
 };
 
 export const getArticleById = async (id) => {
-  const response = await fetch(`${API_URL}/articles/${id}`);
+  const token = localStorage.getItem("token");
+  const response = await fetch(
+    `${API_URL}/articles/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   const data = await response.json();
 
@@ -70,10 +103,11 @@ export const getArticleById = async (id) => {
 
 export const getArticlesByUserId = async (id) => {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${API_URL}/articles/user/${id}`,{
+  const response = await fetch(`${API_URL}/articles/user/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`},
-    });
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const data = await response.json();
 

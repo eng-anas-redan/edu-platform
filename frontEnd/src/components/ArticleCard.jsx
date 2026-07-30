@@ -4,7 +4,12 @@ import { likedArticle } from "../services/articleService";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { FaTrash, FaEdit, FaShare } from "react-icons/fa";
 import { TbMessageReportFilled } from "react-icons/tb";
-import ReportModal from "../components/ReportModal"
+import ReportModal from "../components/ReportModal";
+import {
+  shareArticle,
+  removeSharedArticle,
+} from "../services/sharedArticleService";
+
 const ArticleCard = ({
   currentUser,
   currentUserRole,
@@ -15,21 +20,31 @@ const ArticleCard = ({
   images = [],
   likes = [],
   comments = 0,
+  isShared = false,
+  sharedArticleId = null,
   authorId,
   authorFirstName,
   authorLastName,
+  sharedBy,
   createdAt,
+  sharedAt,
   handleDelete,
+  handleRemoveShare,
+  refreshFeed,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
+  const [shared, setShared] = useState(isShared);
+  const [sharedId, setSharedId] = useState(sharedArticleId);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const isOwner = currentUser === authorId;
   const isAdmin = currentUserRole === "admin";
+  const isTeacher = currentUserRole === "teacher";
   const [showReport, setShowReport] = useState(false);
-
+  const isSharedPost = !!sharedBy;
+  const shouldShowMenu = !isSharedPost || (isSharedPost && shared);
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -45,6 +60,11 @@ const ArticleCard = ({
     setIsLiked(likes.some((userId) => userId.toString() === currentUser));
     setLikesCount(likes.length);
   }, [likes, currentUser]);
+
+  useEffect(() => {
+    setShared(isShared);
+    setSharedId(sharedArticleId);
+  }, [isShared, sharedArticleId]);
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -73,27 +93,68 @@ const ArticleCard = ({
     }
   };
 
+  const handleShare = async () => {
+    try {
+      if (shared) {
+        await removeSharedArticle(sharedId);
+
+        setShared(false);
+        setSharedId(null);
+        if (handleRemoveShare) {
+          handleRemoveShare(sharedId);
+        }
+      } else {
+        const data = await shareArticle(id);
+
+        setShared(true);
+        setSharedId(data.sharedArticle._id);
+        if (refreshFeed) {
+          await refreshFeed();
+        }
+      }
+
+      setShowDropdown(false);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
   return (
     <div
       dir="auto"
-      className="w-full max-w-2xl bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4 "
-      dir="auto"
+      className="w-full bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-xl mb-4 "
     >
-      <div className="flex justify-between">
+      {sharedBy && (
+        <p className="text-sm text-gray-400 mb-3">
+          🔁 {sharedBy.fname} {sharedBy.lname} تمت مشاركة هذا المقال بواسطة
+        </p>
+      )}
+      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center font-bold text-white">
             {authorFirstName.charAt(0)}
           </div>
-          <div>
-            <h3 className="font-semibold text-primary-300">
+
+          <div className="flex flex-col">
+            <h3 className="font-semibold text-primary-300 leading-none">
               {authorFirstName} {authorLastName}
             </h3>
-            <p className="text-xs text-center text-gray-400">
-              {new Date(createdAt).toLocaleDateString("ar-EG")}
-            </p>
+
+            <span className="text-xs text-gray-400 mt-1">
+              نُشر في {new Date(createdAt).toLocaleDateString("ar-EG")}
+            </span>
+
+            {sharedBy && sharedAt && (
+              <span className="text-[11px] text-gray-400">
+                تمت المشاركة في {new Date(sharedAt).toLocaleDateString("ar-EG")}
+              </span>
+            )}
           </div>
         </div>
-        <h2 className="text-lg font-bold text-white">{title}</h2>
+
+        <h2 className="text-lg md:text-xl font-bold text-white text-right md:max-w-[55%] w-full">
+          {title}
+        </h2>
       </div>
       <div className=" text-sm text-start text-gray-300">
         {content.length > 400 ? `${content.slice(0, 200)}...` : content}
@@ -237,58 +298,75 @@ transition-colors
           </Link>
         </div>
         <div className="relative" ref={dropdownRef}>
-          <button
-            className="flex items-center gap-1
+          {shouldShowMenu && (
+            <button
+              className="flex items-center gap-1
 text-gray-300
 hover:text-white
 transition-colors"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <BsThreeDotsVertical />
-          </button>
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              <BsThreeDotsVertical />
+            </button>
+          )}
           {showDropdown && (
             <div className="absolute right-0 bottom-full translate-y-[-8px] w-56 bg-white rounded-lg shadow-xl overflow-hidden z-50 border border-primary-100">
-              <Link
-                to={`/shareArticle`}
-                className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                onClick={() => setShowDropdown(false)}
-              >
-                <FaShare className="mr-3 text-primary-400" />
-                Share
-              </Link>
-              {isOwner && (
-                <Link
-                  to={`/updateArticle/${id}`}
-                  className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                  onClick={() => setShowDropdown(false)}
-                >
-                  <FaEdit className="mr-3 text-primary-400" />
-                  Edit
-                </Link>
-              )}
-              {!isOwner && (
-                <button
-                  onClick={() => {
-                    setShowDropdown(false);
-                    setShowReport(true);
-                  }}
-                  className="flex items-center w-full px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
-                >
-                  <TbMessageReportFilled className="mr-3 text-lg text-primary-400" />
-                  Report
-                </button>
-              )}
-              {(isOwner || isAdmin) && (
-                <button
-                  onClick={() => {
-                    handleDelete(id);
-                    setShowDropdown(false);
-                  }}
-                  className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
-                >
-                  <FaTrash className="mr-3" />
-                  Delete
-                </button>
+              {isSharedPost ? (
+                shared && (
+                  <button
+                    onClick={handleShare}
+                    className="flex items-center w-full px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                  >
+                    <FaShare className="mr-3 text-primary-400" />
+                    Unshare
+                  </button>
+                )
+              ) : (
+                <>
+                  {isTeacher && (
+                    <button
+                      onClick={handleShare}
+                      className="flex items-center w-full px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                    >
+                      <FaShare className="mr-3 text-primary-400" />
+                      {shared ? "Unshare" : "Share"}
+                    </button>
+                  )}
+                  {isOwner && (
+                    <Link
+                      to={`/updateArticle/${id}`}
+                      className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <FaEdit className="mr-3 text-primary-400" />
+                      Edit
+                    </Link>
+                  )}
+                  {!isOwner && (
+                    <button
+                      onClick={() => {
+                        setShowDropdown(false);
+                        setShowReport(true);
+                      }}
+                      className="flex items-center w-full px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
+                    >
+                      <TbMessageReportFilled className="mr-3 text-lg text-primary-400" />
+                      Report
+                    </button>
+                  )}
+                  {(isOwner || isAdmin) && (
+                    <button
+                      onClick={() => {
+                        handleDelete(id);
+                        setShowDropdown(false);
+                      }}
+                      className="flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+                    >
+                      <FaTrash className="mr-3" />
+                      Delete
+                    </button>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -307,12 +385,11 @@ transition-colors"
         ))}
       </div>
       <ReportModal
-    articleId={id}
-    isOpen={showReport}
-    onClose={() => setShowReport(false)}
-/>
+        articleId={id}
+        isOpen={showReport}
+        onClose={() => setShowReport(false)}
+      />
     </div>
-    
   );
 };
 

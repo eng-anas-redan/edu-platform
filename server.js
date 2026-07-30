@@ -7,8 +7,10 @@ import adminRoutes from "./routes/adminRoutes.js"
 import commentRoutes from "./routes/commentRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js"
 import reportRoutes from "./routes/reportRoutes.js";
+import sharedArticleRoutes from "./routes/sharedArticleRoutes.js";
 import dotenv from "dotenv";
 import { upload } from "./middleware/upload.js";
+
 import path from "path";
 
 dotenv.config();
@@ -23,6 +25,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api", requestRoutes);
 app.use("/api/reports", reportRoutes);
+app.use("/api/shared-articles", sharedArticleRoutes);
 app.use("/uploads", express.static("uploads"));
 
 mongoose

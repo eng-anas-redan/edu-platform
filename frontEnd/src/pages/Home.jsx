@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import {
   getArticles,
+  getFeed,
   deleteArticle,
   getAllTags,
 } from "../services/articleService";
@@ -12,6 +13,7 @@ const Home = () => {
   const userData = JSON.parse(localStorage.getItem("user")) || {};
 
   const [articlesData, setArticlesData] = useState([]);
+
   const [tags, setTags] = useState([]);
 
   const [tag, setTag] = useState("");
@@ -20,10 +22,11 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const articles = await getArticles();
+        const feed = await getFeed();
+        console.log(feed);
         const allTags = await getAllTags();
 
-        setArticlesData(articles);
+        setArticlesData(feed);
         setTags(allTags);
       } catch (error) {
         console.error(error);
@@ -35,9 +38,7 @@ const Home = () => {
 
   const handleSearch = async (word) => {
     try {
-      const data = await getArticles(
-        word.trim() ? { word } : {}
-      );
+      const data = await getArticles(word.trim() ? { word } : {});
 
       setArticlesData(data);
     } catch (error) {
@@ -62,8 +63,7 @@ const Home = () => {
     setTag("");
     setSort("");
 
-    const data = await getArticles();
-    setArticlesData(data);
+    await fetchFeed();
   };
 
   const handleDelete = async (articleId) => {
@@ -71,13 +71,21 @@ const Home = () => {
       await deleteArticle(articleId);
 
       setArticlesData((prevArticles) =>
-        prevArticles.filter(
-          (article) => article._id !== articleId
-        )
+        prevArticles.filter((item) => item.article._id !== articleId),
       );
     } catch (err) {
       console.error(err.message);
     }
+  };
+
+  const handleRemoveShare = (sharedArticleId) => {
+    setArticlesData((prev) =>
+      prev.filter((item) => item.sharedArticleId !== sharedArticleId),
+    );
+  };
+  const fetchFeed = async () => {
+    const feed = await getFeed();
+    setArticlesData(feed);
   };
 
   return (
@@ -100,7 +108,6 @@ const Home = () => {
         pt-24
         "
       >
-
         <div
           className="
           w-full
@@ -112,7 +119,6 @@ const Home = () => {
           gap-6
           "
         >
-
           {/* Filters */}
           <aside className="lg:col-span-1">
             <FilterSidebar
@@ -126,50 +132,50 @@ const Home = () => {
             />
           </aside>
 
-
           {/* Articles */}
-          <section className="lg:col-span-3 space-y-6">
-
-            {articlesData.length === 0 ? (
-              <div
-                className="
+          <section className="lg:col-span-3 flex justify-center">
+            <div className="w-full max-w-4xl">
+              {articlesData.length === 0 ? (
+                <div
+                  className="
                 text-center
                 text-gray-300
                 py-20
                 text-xl
                 "
-              >
-                No articles found
-              </div>
-            ) : (
-
-              articlesData.map((article) => (
-
-                <ArticleCard
-                  key={article._id}
-                  currentUser={userData?.id}
-                  currentUserRole={userData.role}
-                  id={article._id}
-                  title={article.title}
-                  content={article.content}
-                  tags={article.tags}
-                  images={article.images}
-                  likes={article.likes}
-                  comments={article.commentsCount}
-                  authorId={article.author._id}
-                  authorFirstName={article.author.fname}
-                  authorLastName={article.author.lname}
-                  createdAt={article.createdAt}
-                  handleDelete={handleDelete}
-                />
-
-              ))
-            )}
-
+                >
+                  No articles found
+                </div>
+              ) : (
+                articlesData.map((article) => (
+                  <ArticleCard
+                    key={`${article.type}-${article.article._id}-${article.sharedBy?._id || "original"}`}
+                    currentUser={userData?.id}
+                    currentUserRole={userData?.role}
+                    id={article.article._id}
+                    title={article.article.title}
+                    content={article.article.content}
+                    tags={article.article.tags}
+                    images={article.article.images}
+                    likes={article.article.likes}
+                    comments={article.article.commentsCount}
+                    sharedBy={article.sharedBy}
+                    isShared={article.isShared}
+                    sharedArticleId={article.sharedArticleId}
+                    authorId={article.article.author._id}
+                    authorFirstName={article.article.author.fname}
+                    authorLastName={article.article.author.lname}
+                    createdAt={article.article.createdAt}
+                    sharedAt={article.sharedBy ? article.createdAt : null}
+                    handleDelete={handleDelete}
+                    handleRemoveShare={handleRemoveShare}
+                    refreshFeed={fetchFeed}
+                  />
+                ))
+              )}
+            </div>
           </section>
-
         </div>
-
       </div>
     </>
   );

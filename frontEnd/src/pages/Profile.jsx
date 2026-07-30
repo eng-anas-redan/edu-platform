@@ -1,4 +1,3 @@
-import React from "react";
 import TeacherProfile from "../components/TeacherProfile";
 import { getUserById } from "../services/authService";
 import { getArticlesByUserId, deleteArticle } from "../services/articleService";
@@ -38,12 +37,18 @@ const Profile = () => {
       await deleteArticle(articleId);
 
       setArticles((prevArticles) =>
-        prevArticles.filter((article) => article._id !== articleId),
+        prevArticles.filter(item => item.article._id !== articleId)
       );
     } catch (err) {
       console.error(err.message);
     }
   };
+  const handleRemoveShare = (sharedArticleId) => {
+    setArticles((prev) =>
+      prev.filter((item) => item.sharedArticleId !== sharedArticleId),
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 pt-20">
       <TeacherProfile
@@ -52,6 +57,7 @@ const Profile = () => {
         currentUser={currentUser.id}
         currentUserRole={currentUser.role}
         handleDelete={handleDelete}
+        handleRemoveShare={handleRemoveShare}
       />
     </div>
   );

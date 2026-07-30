@@ -3,6 +3,7 @@ import {
   createArticle,
   updateArticle,
   getArticles,
+  getFeed,
   getSingleArticle,
   getArticlesByUserId,
   deleteArticle,
@@ -25,10 +26,11 @@ router.post(
 );
 
 // READ
-router.get("/", getArticles);
-router.get("/user/:id", getArticlesByUserId);
+router.get("/", authMiddleware , getArticles);
+router.get("/shared-articles" ,authMiddleware , getFeed);
+router.get("/user/:id",authMiddleware , getArticlesByUserId);
 router.get("/tags", getAllTags);
-router.get("/:id", getSingleArticle);
+router.get("/:id",authMiddleware, getSingleArticle);
 // UPDATE
 router.put(
   "/:id",
