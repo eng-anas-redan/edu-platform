@@ -8,6 +8,8 @@ import commentRoutes from "./routes/commentRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js"
 import reportRoutes from "./routes/reportRoutes.js";
 import sharedArticleRoutes from "./routes/sharedArticleRoutes.js";
+import ratingRoutes from "./routes/ratingRoutes.js";
+
 import dotenv from "dotenv";
 import { upload } from "./middleware/upload.js";
 
@@ -27,6 +29,7 @@ app.use("/api", requestRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/shared-articles", sharedArticleRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/ratings", ratingRoutes);
 
 mongoose
   .connect(

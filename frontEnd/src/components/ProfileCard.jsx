@@ -1,4 +1,4 @@
-import { FaStar , FaArrowRight} from "react-icons/fa";
+import { FaStar, FaArrowRight } from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
 const ProfileCard = ({
@@ -24,15 +24,20 @@ transition-all duration-300"
       <h2 className="text-md font-bold text-white mb-2">
         {fName} {lName}
       </h2>
-      <p className="px-3 py-1 rounded-full bg-emerald-500/20
-text-emerald-300 text-sm">
+      <p
+        className="px-3 py-1 rounded-full bg-emerald-500/20
+text-emerald-300 text-sm"
+      >
         {specialty} Teacher
       </p>
 
       <div className="grid grid-cols-2 gap-3 w-full mt-5">
         <div className="bg-white/5 rounded-xl p-3 text-center">
           <FaStar className="mx-auto text-yellow-400" />
-          <p className="mt-1 text-sm">{rating || "No Reviews Yet"}</p>
+
+          <p className="mt-1 text-sm text-white">
+            {rating > 0 ? `${rating.toFixed(1)} / 5` : "No Reviews Yet"}
+          </p>
         </div>
 
         <div className="bg-white/5 rounded-xl p-3 text-center">

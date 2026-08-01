@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../components/Navbar";
 import ProfileCard from "../components/ProfileCard";
 import { getAllUsers } from "../services/authService";
+import { getTeacherRating } from "../services/ratingService";
 import { Link } from "react-router-dom";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { useState, useEffect } from "react";
@@ -13,7 +14,30 @@ const Teachers = () => {
     const fetchUsers = async () => {
       try {
         const data = await getAllUsers();
-        setUsersData(data);
+
+        const teachers = data.filter(
+          (user) => user.role === "teacher" && user._id !== currentUser.id,
+        );
+
+        const teachersWithRating = await Promise.all(
+          teachers.map(async (teacher) => {
+            try {
+              const ratingData = await getTeacherRating(teacher._id);
+
+              return {
+                ...teacher,
+                rating: ratingData.averageRating,
+              };
+            } catch (error) {
+              return {
+                ...teacher,
+                rating: 0,
+              };
+            }
+          }),
+        );
+
+        setUsersData(teachersWithRating);
       } catch (error) {
         console.error(error);
       }

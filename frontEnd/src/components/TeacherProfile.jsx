@@ -2,6 +2,9 @@ import { FaStar } from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import ArticleCard from "./ArticleCard";
 import { Link } from "react-router-dom";
+import { useState ,  useEffect } from "react";
+import RatingStars from "./RatingStars";
+import { rateTeacher, getTeacherRating } from "../services/ratingService";
 const TeacherProfile = ({
   teacher = {},
   articles = [],
@@ -10,6 +13,21 @@ const TeacherProfile = ({
   handleDelete,
   handleRemoveShare,
 }) => {
+  const handleRate = async (value) => {
+    try {
+      await rateTeacher({
+        teacherId: teacher._id,
+        rating: value,
+      });
+
+      const data = await getTeacherRating(teacher._id);
+
+      setMyRating(data.myRating);
+      setAverageRating(data.averageRating);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const {
     fname = "",
     lname = "",
@@ -21,7 +39,25 @@ const TeacherProfile = ({
   } = teacher;
 
   const fullName = `${fname} ${lname}`.trim();
+  const canRate = currentUserRole === "student" && currentUser !== teacher._id;
+  const [myRating, setMyRating] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
+  useEffect(() => {
+  const fetchRating = async () => {
+    try {
+      const data = await getTeacherRating(teacher._id);
 
+      setAverageRating(data.averageRating);
+      setMyRating(data.myRating || 0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (teacher._id) {
+    fetchRating();
+  }
+}, [teacher._id]);
   return (
     <div className="max-w-6xl mx-auto px-6 pb-10 space-y-6">
       {/* 🔵 HEADER CARD */}
@@ -37,17 +73,32 @@ const TeacherProfile = ({
 
           <p className="text-gray-300">Teacher {specialty}</p>
 
-          <div className="flex gap-4 mt-2 text-sm text-gray-400">
-            <div className="flex items-center justify-center gap-2 text-gray-300">
-              <FaStar className="text-yellow-400" size={18} />
-              <span>{rating > 0 ? rating : "No rating yet"}</span>
+          <div className="flex items-center justify-between mt-3">
+            <div className="space-y-2">
+              {/* Average Rating */}
+              <div className="flex items-center gap-3">
+                <RatingStars rating={averageRating} />
+
+                <span className="text-gray-300 font-medium">
+                  {averageRating > 0 ? averageRating : "No rating yet"}
+                </span>
+              </div>
+
+              {/* Student Rating */}
+              {canRate && (
+                <div className="mt-3">
+                  <p className="text-xs text-gray-400 mb-1">
+                    Rate this teacher
+                  </p>
+
+                  <RatingStars rating={myRating} editable onRate={handleRate} />
+                </div>
+              )}
             </div>
 
-            <div className="flex items-center justify-center gap-2 text-gray-300">
-              <PiCertificateLight
-                className="inline text-yellow-400"
-                size={20}
-              />
+            <div className="flex items-center gap-2 text-gray-300">
+              <PiCertificateLight className="text-yellow-400" size={20} />
+
               <span>{experience} yrs experience</span>
             </div>
           </div>
