@@ -1,6 +1,11 @@
 import User from "../models/User.js";
 import Request from "../models/VerificationRequest.js";
 import jwt from "jsonwebtoken";
+import Article from "../models/Article.js";
+import Comment from "../models/Comment.js";
+import Report from "../models/Report.js";
+import SharedArticle from "../models/SharedArticle.js";
+import Rating from "../models/Rating.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -30,7 +35,7 @@ export const getAllUsers = async (req, res) => {
 
     const usersData = users.map((user) => {
       const request = requests.find(
-        (r) => r.user.toString() === user._id.toString()
+        (r) => r.user.toString() === user._id.toString(),
       );
 
       return {
@@ -62,7 +67,7 @@ export const getSingleUser = async (req, res) => {
       bio: request?.bio,
       experience: request?.experience,
       rating: request?.rating,
-      specialty : request?.specialty
+      specialty: request?.specialty,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -71,25 +76,25 @@ export const getSingleUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const {email , bio , experience } = req.body;
+    const { email, bio, experience } = req.body;
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      {  email },
-      { new: true , runValidators: true }
+      { email },
+      { new: true, runValidators: true },
     ).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     const request = await Request.findOneAndUpdate(
-      {user : user._id} ,
-      {bio , experience}, 
-      {new : true}
+      { user: user._id },
+      { bio, experience },
+      { new: true },
     );
     res.json({
       ...user.toObject(),
-      bio : request?.bio,
+      bio: request?.bio,
       experience: request?.experience,
     });
   } catch (error) {
@@ -99,15 +104,69 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+
+    const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
 
-    res.json({ message: "User deleted successfully" });
+    // جميع مقالات المستخدم
+    const articles = await Article.find({ author: id }).select("_id");
+    const articleIds = articles.map((article) => article._id);
+
+    // حذف البيانات المرتبطة بالمقالات
+    await Comment.deleteMany({
+      article: { $in: articleIds },
+    });
+    await Comment.deleteMany({
+      author: id,
+    });
+
+    await Report.deleteMany({
+      article: { $in: articleIds },
+    });
+
+    await SharedArticle.deleteMany({
+      article: { $in: articleIds },
+    });
+
+    // حذف المقالات
+    await Article.deleteMany({
+      author: id,
+    });
+
+    // حذف المشاركات التي قام بها المستخدم
+    await SharedArticle.deleteMany({
+      user: id,
+    });
+
+    // حذف التقييمات التي تخص المستخدم
+    await Rating.deleteMany({
+      $or: [{ teacher: id }, { student: id }],
+    });
+
+    // حذف طلبات التوثيق
+    await Request.deleteMany({
+      user: id,
+    });
+    // حذف البلاغات
+    await Report.deleteMany({
+      reporter: id,
+    });
+    // حذف المستخدم
+    await user.deleteOne();
+
+    res.json({
+      message: "User deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({
+      error: error.message,
+    });
   }
 };
 // LogIn

@@ -38,3 +38,40 @@ export const getTeacherRating = async (teacherId) => {
 
   return data;
 };
+
+export const getAllRatings = async () => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/ratings`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+export const deleteRating = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`${API_URL}/ratings/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};

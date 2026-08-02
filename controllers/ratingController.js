@@ -129,3 +129,40 @@ export const getTeacherRating = async (req, res) => {
     });
   }
 };
+export const getAllRatings = async (req, res) => {
+  try {
+    const ratings = await Rating.find()
+      .populate("student", "fname lname")
+      .populate("teacher", "fname lname")
+      .sort({ createdAt: -1 });
+
+    res.json(ratings);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+export const deleteRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const rating = await Rating.findById(id);
+
+    if (!rating) {
+      return res.status(404).json({
+        message: "Rating not found",
+      });
+    }
+
+    await rating.deleteOne();
+
+    res.json({
+      message: "Rating deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

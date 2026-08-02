@@ -2,6 +2,8 @@ import Article from "../models/Article.js";
 import mongoose from "mongoose";
 import User from "../models/User.js";
 import SharedArticle from "../models/SharedArticle.js";
+import Comment from "../models/Comment.js";
+import Report from "../models/Report.js";
 
 export const createArticle = async (req, res) => {
   try {
@@ -105,7 +107,6 @@ export const getArticles = async (req, res) => {
 
     const articlesWithShares = await Promise.all(
       articles.map(async (article) => {
-
         const sharedArticle = await SharedArticle.findOne({
           article: article._id,
           user: userId,
@@ -322,7 +323,22 @@ export const deleteArticle = async (req, res) => {
       });
     }
 
+    // حذف جميع المشاركات الخاصة بالمقال
     await SharedArticle.deleteMany({
+      article: id,
+    });
+
+    // حذف جميع التعليقات الخاصة بالمقال
+    await Comment.deleteMany({
+      article: id,
+    });
+    // حذف جميع التعليقات الخاصة بالمستخدم
+    await Comment.deleteMany({
+      author: id,
+    });
+
+    // حذف جميع البلاغات الخاصة بالمقال
+    await Report.deleteMany({
       article: id,
     });
 
