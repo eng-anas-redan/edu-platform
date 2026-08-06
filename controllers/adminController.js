@@ -3,6 +3,7 @@ import Article  from "../models/Article.js";
 import Comment from "../models/Comment.js";
 import Report from "../models/Report.js"
 import VerificationRequest from "../models/VerificationRequest.js";
+import Rating from "../models/Rating.js"
 
 export const getStats = async (req, res) => {
   try {
@@ -11,6 +12,7 @@ export const getStats = async (req, res) => {
     const comments = await Comment.countDocuments();
     const reports = await Report.countDocuments();
     const verificationRequests = await VerificationRequest.countDocuments();
+    const ratings = await Rating.countDocuments();
 
     res.status(200).json({
       users,
@@ -18,6 +20,7 @@ export const getStats = async (req, res) => {
       comments,
       verificationRequests,
       reports,
+      ratings
     });
   } catch (error) {
     res.status(500).json({

@@ -24,7 +24,7 @@ const DashboardStats = ({ sections }) => {
   const scrollToSection = (ref) => {
     ref.current?.scrollIntoView({
       behavior: "smooth",
-      block: "start",
+      block: "center",
     });
   };
 
@@ -74,6 +74,15 @@ const DashboardStats = ({ sections }) => {
         <h3 className="text-slate-300">Reports</h3>
 
         <p className="text-4xl font-bold text-white mt-2">{stats.reports}</p>
+      </div>
+
+      <div
+        onClick={() => scrollToSection(sections.ratings)}
+        className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:bg-white/10 hover:border-blue-400 hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-500/20 active:scale-95"
+      >
+        <h3 className="text-slate-300">Ratings</h3>
+
+        <p className="text-4xl font-bold text-white mt-2">{stats.ratings}</p>
       </div>
     </div>
   );

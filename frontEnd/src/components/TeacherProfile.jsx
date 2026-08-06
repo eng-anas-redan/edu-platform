@@ -2,7 +2,7 @@ import { FaStar } from "react-icons/fa";
 import { PiCertificateLight } from "react-icons/pi";
 import ArticleCard from "./ArticleCard";
 import { Link } from "react-router-dom";
-import { useState ,  useEffect } from "react";
+import { useState, useEffect } from "react";
 import RatingStars from "./RatingStars";
 import { rateTeacher, getTeacherRating } from "../services/ratingService";
 const TeacherProfile = ({
@@ -35,7 +35,6 @@ const TeacherProfile = ({
     bio = "",
     specialty = "",
     experience = 0,
-    rating = 0,
   } = teacher;
 
   const fullName = `${fname} ${lname}`.trim();
@@ -43,21 +42,21 @@ const TeacherProfile = ({
   const [myRating, setMyRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   useEffect(() => {
-  const fetchRating = async () => {
-    try {
-      const data = await getTeacherRating(teacher._id);
+    const fetchRating = async () => {
+      try {
+        const data = await getTeacherRating(teacher._id);
 
-      setAverageRating(data.averageRating);
-      setMyRating(data.myRating || 0);
-    } catch (error) {
-      console.log(error);
+        setAverageRating(data.averageRating);
+        setMyRating(data.myRating || 0);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (teacher._id) {
+      fetchRating();
     }
-  };
-
-  if (teacher._id) {
-    fetchRating();
-  }
-}, [teacher._id]);
+  }, [teacher._id]);
   return (
     <div className="max-w-6xl mx-auto px-6 pb-10 space-y-6">
       {/* 🔵 HEADER CARD */}
@@ -71,7 +70,12 @@ const TeacherProfile = ({
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-white">{fullName}</h2>
 
-          <p className="text-gray-300">Teacher {specialty}</p>
+          <p className="text-gray-300">{specialty} teacher</p>
+          {/* Experience */}
+          <div className="flex items-center gap-2 mt-2 text-gray-300">
+            <PiCertificateLight className="text-yellow-400" size={18} />
+            <span>{experience} yrs experience</span>
+          </div>
 
           <div className="flex items-center justify-between mt-3">
             <div className="space-y-2">
@@ -94,12 +98,6 @@ const TeacherProfile = ({
                   <RatingStars rating={myRating} editable onRate={handleRate} />
                 </div>
               )}
-            </div>
-
-            <div className="flex items-center gap-2 text-gray-300">
-              <PiCertificateLight className="text-yellow-400" size={20} />
-
-              <span>{experience} yrs experience</span>
             </div>
           </div>
         </div>

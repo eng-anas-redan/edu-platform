@@ -1,9 +1,14 @@
 import LogoIcon from "../assets/Icon.png";
-import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaSearch,
+  FaUser,
+  FaSignOutAlt,
+  FaTachometerAlt,
+} from "react-icons/fa";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
-const Navbar = ({ userId, fName , onSearch }) => {
+const Navbar = ({ userId, fName, onSearch }) => {
   const navigate = useNavigate();
   const [showDropdown, setShowDropdown] = useState(false);
   const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -74,6 +79,16 @@ const Navbar = ({ userId, fName , onSearch }) => {
               Contact Us
             </NavLink>
           </div>
+
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-white/10"
+            >
+              <FaTachometerAlt />
+              Dashboard
+            </Link>
+          )}
 
           {/* مربع البحث */}
           <div className="relative hidden md:block">
