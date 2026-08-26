@@ -84,7 +84,7 @@ const Teachers = () => {
               />
             ))
         )}
-        {currentUser.role != "teacher" && (
+        {currentUser.role != "teacher" && currentUser.role != "admin" && (
           <div
             className="flex flex-col justify-between items-center w-full h-80
   bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6
