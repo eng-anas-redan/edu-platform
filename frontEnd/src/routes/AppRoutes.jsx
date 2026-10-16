@@ -10,11 +10,11 @@ import UpdateArticle from "../pages/UpdateArticle";
 import Article from "../pages/Article";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import VerificationDetails from "../pages/admin/VerificationDetails";
-import CreateRequest from "../pages/createRequest";
+import CreateRequest from "../pages/CreateRequest";
 import Profile from "../pages/Profile";
 import Teachers from "../pages/Teachers";
 import EditTeacherProfile from "../pages/EditTeacherProfile";
-import ContactUs from "../pages/contactUs";
+import ContactUs from "../pages/ContactUs";
 export default function AppRoutes() {
   return (
     <BrowserRouter>
