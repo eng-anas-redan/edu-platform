@@ -1,13 +1,18 @@
+
 # dependencies
 node_modules/
+frontEnd/node_modules/
 
 # env
 .env
+.env.*
+!.env.example
 
 # build
 dist/
 build/
 dist-ssr/
+frontEnd/dist/
 
 # logs
 *.log

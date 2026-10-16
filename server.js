@@ -31,10 +31,14 @@ app.use("/api/shared-articles", sharedArticleRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/ratings", ratingRoutes);
 
+const uri= `mongodb+srv://${process.env.MONGODB_HOST}/${process.env.MONGODB_DB}?appName=Cluster0`;
+
 mongoose
-  .connect(
-    "mongodb://anas23ry_db_user:mongodb%40react@ac-tbnusil-shard-00-00.odkpvdl.mongodb.net:27017,ac-tbnusil-shard-00-01.odkpvdl.mongodb.net:27017,ac-tbnusil-shard-00-02.odkpvdl.mongodb.net:27017/?ssl=true&replicaSet=atlas-nz26ul-shard-0&authSource=admin&appName=Cluster0",
-  )
+  .connect(uri,{
+    user: process.env.MONGODB_USER,
+    pass: process.env.MONGODB_PASS,
+    authSource:"admin",
+  })
   .then(() => {
     console.log("connected");
 
