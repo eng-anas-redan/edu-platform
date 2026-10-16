@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Rating from "../models/Rating.js";
+import Rating from "../models/rating.js";
 import User from "../models/User.js";
 
 export const rateTeacher = async (req, res) => {
