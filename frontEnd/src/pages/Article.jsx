@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { getArticleById } from "../services/articleService";
 import { useParams } from "react-router-dom";
-import { useState, useEffect ,useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaTrash, FaEdit, FaShare } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { TbMessageReportFilled } from "react-icons/tb";
@@ -11,7 +11,7 @@ import {
   editComment,
   deleteComment,
 } from "../services/commentService";
-import { likedArticle , deleteArticle } from "../services/articleService";
+import { likedArticle, deleteArticle } from "../services/articleService";
 import { useNavigate } from "react-router-dom";
 
 const Article = () => {
@@ -29,6 +29,9 @@ const Article = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const isAdmin = userData.role === "admin";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+  const API_BASE_URL = API_URL.replace(/\/api\/?$/, "");
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -57,17 +60,16 @@ const Article = () => {
   }, [article, userData.id]);
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
 
-  document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
 
-  return () =>
-    document.removeEventListener("mousedown", handleClickOutside);
-}, []);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const goToPrevious = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -147,13 +149,13 @@ const Article = () => {
   }
 
   const handleDeleteArticle = async () => {
-  try {
-    await deleteArticle(id);
-    navigate("/Home");
-  } catch (err) {
-    console.error(err);
-  }
-};
+    try {
+      await deleteArticle(id);
+      navigate("/Home");
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 text-white flex items-center justify-center mx-10 pt-20">
@@ -221,7 +223,7 @@ const Article = () => {
             {article.images.length > 0 && (
               <img
                 className="object-cover rounded-md mx-auto"
-                src={`http://localhost:5000${article.images[currentImageIndex]}`}
+                src={`${API_BASE_URL}${article.images[currentImageIndex]}`}
                 alt={`صورة للمقال ${article.title}`}
                 loading="lazy"
               />
@@ -292,7 +294,7 @@ transition-colors"
                   <FaShare className="mr-3 text-primary-400" />
                   Share
                 </Link>
-                {(userData.id === article.author._id) && (
+                {userData.id === article.author._id && (
                   <Link
                     to={`/updateArticle/${id}`}
                     className="flex items-center px-4 py-3 text-sm text-primary-700 hover:bg-primary-50 transition-colors duration-150"
@@ -312,7 +314,7 @@ transition-colors"
                     Report
                   </Link>
                 )}
-                {((userData.id === article.author._id) || isAdmin) && (
+                {(userData.id === article.author._id || isAdmin) && (
                   <button
                     onClick={() => {
                       handleDeleteArticle(id);

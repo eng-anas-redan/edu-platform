@@ -32,6 +32,9 @@ const ArticleCard = ({
   handleRemoveShare,
   refreshFeed,
 }) => {
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+  const API_BASE_URL = API_URL.replace(/\/api\/?$/, "");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(likes.length);
@@ -221,7 +224,7 @@ const ArticleCard = ({
           {images.length > 0 && (
             <img
               className="object-cover rounded-md mx-auto"
-              src={`http://localhost:5000${images[currentImageIndex]}`}
+              src={`${API_BASE_URL}${images[currentImageIndex]}`}
               alt={`صورة للمقال ${title}`}
               loading="lazy"
             />
